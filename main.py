@@ -78,7 +78,7 @@ def main():
         for itr in tqdm(range(training_iters)):
             offset = (itr * batch_size) % (tr_labels.shape[0] - batch_size)
             batch_x = tr_features[offset:(offset + batch_size), :, :]
-            batch_y = tr_labels[:, :]
+            batch_y = tr_labels[offset:(offset + batch_size), :]
             _, c = session.run([optimizer, loss_f],feed_dict={x: batch_x, y: batch_y})
 
             if training_iters % display_step == 0:

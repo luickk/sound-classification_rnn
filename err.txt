@@ -1,0 +1,95 @@
+$ python main.py
+C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\gradients_impl.py:95: UserWarning: Converting sparse IndexedSlices to a dense Tensor of unknown shape. This may consume a large amount of memory.
+  "Converting sparse IndexedSlices to a dense Tensor of unknown shape. "
+  0%|          | 0/1000 [00:00<?, ?it/s]
+----------------File-------------------
+0.wav
+---------------------------------------
+----------------File-------------------
+1.wav
+---------------------------------------
+----------------File-------------------
+0.wav
+---------------------------------------
+----------------File-------------------
+1.wav
+---------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\client\session.py", line 1327, in _do_call
+    return fn(*args)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\client\session.py", line 1306, in _run_fn
+    status, run_metadata)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\contextlib.py", line 66, in __exit__
+    next(self.gen)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\errors_impl.py", line 466, in raise_exception_on_not_ok_status
+    pywrap_tensorflow.TF_GetCode(status))
+tensorflow.python.framework.errors_impl.InvalidArgumentError: Incompatible shapes: [2,2] vs. [50,2]
+         [[Node: gradients/mul_grad/BroadcastGradientArgs = BroadcastGradientArgs[T=DT_INT32, _device="/job:localhost/replica:0/task:0/cpu:0"](gradients/mul_grad/Shape, gradients/mul_grad/Shape_1)]]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 97, in <module>
+    main()
+  File "main.py", line 82, in main
+    _, c = session.run([optimizer, loss_f],feed_dict={x: batch_x, y: batch_y})
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\client\session.py", line 895, in run
+    run_metadata_ptr)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\client\session.py", line 1124, in _run
+    feed_dict_tensor, options, run_metadata)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\client\session.py", line 1321, in _do_run
+    options, run_metadata)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\client\session.py", line 1340, in _do_call
+    raise type(e)(node_def, op, message)
+tensorflow.python.framework.errors_impl.InvalidArgumentError: Incompatible shapes: [2,2] vs. [50,2]
+         [[Node: gradients/mul_grad/BroadcastGradientArgs = BroadcastGradientArgs[T=DT_INT32, _device="/job:localhost/replica:0/task:0/cpu:0"](gradients/mul_grad/Shape, gradients/mul_grad/Shape_1)]]
+
+Caused by op 'gradients/mul_grad/BroadcastGradientArgs', defined at:
+  File "main.py", line 97, in <module>
+    main()
+  File "main.py", line 66, in main
+    optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate).minimize(loss_f)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\training\optimizer.py", line 315, in minimize
+    grad_loss=grad_loss)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\training\optimizer.py", line 386, in compute_gradients
+    colocate_gradients_with_ops=colocate_gradients_with_ops)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\gradients_impl.py", line 542, in gradients
+    grad_scope, op, func_call, lambda: grad_fn(op, *out_grads))
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\gradients_impl.py", line 348, in _MaybeCompile
+    return grad_fn()  # Exit early
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\gradients_impl.py", line 542, in <lambda>
+    grad_scope, op, func_call, lambda: grad_fn(op, *out_grads))
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\math_grad.py", line 713, in _MulGrad
+    rx, ry = gen_array_ops._broadcast_gradient_args(sx, sy)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\gen_array_ops.py", line 393, in _broadcast_gradient_args
+    name=name)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\op_def_library.py", line 767, in apply_op
+    op_def=op_def)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\ops.py", line 2630, in create_op
+    original_op=self._default_original_op, op_def=op_def)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\ops.py", line 1204, in __init__
+    self._traceback = self._graph._extract_stack()  # pylint: disable=protected-access
+
+...which was originally created as op 'mul', defined at:
+  File "main.py", line 97, in <module>
+    main()
+  File "main.py", line 65, in main
+    loss_f = -tf.reduce_sum(y * tf.log(prediction))
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\math_ops.py", line 865, in binary_op_wrapper
+    return func(x, y, name=name)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\math_ops.py", line 1088, in _mul_dispatch
+    return gen_math_ops._mul(x, y, name=name)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\ops\gen_math_ops.py", line 1449, in _mul
+    result = _op_def_lib.apply_op("Mul", x=x, y=y, name=name)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\op_def_library.py", line 767, in apply_op
+    op_def=op_def)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\ops.py", line 2630, in create_op
+    original_op=self._default_original_op, op_def=op_def)
+  File "C:\Users\YellowDev\AppData\Local\Programs\Python\Python35\lib\site-packages\tensorflow\python\framework\ops.py", line 1204, in __init__
+    self._traceback = self._graph._extract_stack()  # pylint: disable=protected-access
+
+InvalidArgumentError (see above for traceback): Incompatible shapes: [2,2] vs. [50,2]
+         [[Node: gradients/mul_grad/BroadcastGradientArgs = BroadcastGradientArgs[T=DT_INT32, _device="/job:localhost/replica:0/task:0/cpu:0"](gradients/mul_grad/Shape, gradients/mul_grad/Shape_1)]]
+
+2017-08-29 11:13:36.320996: W C:\tf_jenkins\home\workspace\rel-win\M\windows\PY\35\tensorflow\core\platform\cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-08-29 11:13:36.321021: W C:\tf_jenkins\home\workspace\rel-win\M\windows\PY\35\tensorflow\core\platform\cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
