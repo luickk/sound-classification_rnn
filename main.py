@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 import glob
 import os
 import librosa
@@ -7,8 +8,7 @@ from tensorflow.python.ops import rnn, rnn_cell
 import numpy as np
 from tqdm import tqdm
 
-from data.data_prog import extract_features
-from data.data_prog import one_hot_encode
+from data.data_prog import extract_features, one_hot_encode, txt_print
 
 plt.style.use('ggplot')
 
@@ -24,15 +24,11 @@ def main():
     ts_features,ts_labels = extract_features(parent_dir,ts_sub_dirs)
     ts_labels = one_hot_encode(ts_labels)
 
-    #print('------------------Feature_Set-------------------')
-    #print(tr_features)
-
     tf.reset_default_graph()
 
-    learning_rate = 0.01
-    training_iters = 1000
-    batch_size = 50
-    display_step = 200
+    learning_rate = 0.0001
+    training_iters = 500
+    batch_size = 3
     name='RNN_MODEL'
 
 
@@ -40,16 +36,15 @@ def main():
     n_input = 20
     n_steps = 41
     n_hidden = 300
-    n_classes = 2
+    n_classes = len(tr_labels)
+    print(len(ts_labels))
+    x = tf.placeholder("float", [None, n_input, n_steps], name="xx")
+    y = tf.placeholder("float", [None, n_classes], name="yy")
 
-    x = tf.placeholder("float", [None, n_input, n_steps])
-    y = tf.placeholder("float", [None, n_classes])
-
-    weight = tf.Variable(tf.random_normal([n_hidden, n_classes]))
-    bias = tf.Variable(tf.random_normal([n_classes]))
+    weight = tf.Variable(tf.truncated_normal([n_hidden, n_classes]), name="w1")
+    bias = tf.Variable(tf.truncated_normal([n_classes]), name="b1")
 
     def RNN(x, weight, bias):
-
         stacked_rnn = []
         for iiLyr in range(3):
             stacked_rnn.append(rnn_cell.LSTMCell(n_hidden,state_is_tuple = True))
@@ -57,40 +52,49 @@ def main():
         output, state = tf.nn.dynamic_rnn(cell, x, dtype = tf.float32)
         output = tf.transpose(output, [1, 0, 2])
         last = tf.gather(output, int(output.get_shape()[0]) - 1)
-        return tf.nn.softmax(tf.matmul(last, weight) + bias)
+        return tf.matmul(last, weight, name="soft") + bias
 
-    prediction = RNN(x, weight, bias)
 
+    logits = RNN(x, weight, bias)
+    prediction = tf.nn.softmax(logits, name="soft_pr")
+
+    #prediction = tf.transpose(prediction)
     # Define loss and optimizer
-    loss_f = -tf.reduce_sum(y * tf.log(prediction))
-    optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate).minimize(loss_f)
-
+    loss_op = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+        logits=logits, labels=y))
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+    train_op = optimizer.minimize(loss_op)
     # Evaluate model
     correct_pred = tf.equal(tf.argmax(prediction,1), tf.argmax(y,1))
     accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
+
     # Initializing the variables
     init = tf.global_variables_initializer()
+
+    saver = tf.train.Saver()
 
     with tf.Session() as session:
         session.run(init)
 
-        for itr in tqdm(range(training_iters)):
-            offset = (itr * batch_size) % (tr_labels.shape[0] - batch_size)
+        for itr in range(training_iters):
+            offset = (itr * batch_size) % (tr_labels.shape[0]+1 - batch_size)
             batch_x = tr_features[offset:(offset + batch_size), :, :]
             batch_y = tr_labels[offset:(offset + batch_size), :]
-            _, c = session.run([optimizer, loss_f],feed_dict={x: batch_x, y: batch_y})
+            session.run(train_op, feed_dict={x: batch_x, y : batch_y})
 
-            if training_iters % display_step == 0:
-                # Calculate batch accuracy
-                acc = session.run(accuracy, feed_dict={x: batch_x, y: batch_y})
-                # Calculate batch loss
-                loss = session.run(loss_f, feed_dict={x: batch_x, y: batch_y})
-                print ("Iter " + str(training_iters) + ", Minibatch Loss= " + \
-                      "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                      "{:.5f}".format(acc))
+            loss, acc = session.run([loss_op, accuracy], feed_dict={x: batch_x,
+                                                                 y: batch_y})
 
-        print('Test accuracy: ',round(session.run(accuracy, feed_dict={x: ts_features, y: ts_labels}) , 3))
+            #txt_print(acc)
+            print('it',itr,'/',training_iters,'  |','loss:',loss)
+            #variables_names =[v.name for v in tf.trainable_variables()]
+            #values = session.run(variables_names)
+            #for k,v in zip(variables_names, values):
+                #print(k, v)
+
+        saver.save(session, './model/' + 'model.ckpt', global_step=training_iters+1)
+        print('Test accuracy: ',session.run(accuracy, feed_dict={x: ts_features, y: ts_labels}) , 3)
 
 
 if __name__ == "__main__":

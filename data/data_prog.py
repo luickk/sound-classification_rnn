@@ -1,5 +1,6 @@
 import glob
 import os
+import sys
 import librosa
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -16,6 +17,10 @@ def windows(data, window_size):
         yield start, start + window_size
         start += (window_size / 2)
 
+def txt_print(text):
+    sys.stdout.write(str(text))
+    sys.stdout.flush()
+
 def extract_features(parent_dir,sub_dirs,file_ext='*.wav',bands = 20, frames = 41):
     window_size = 512 * (frames - 1)
     mfccs = []
@@ -31,11 +36,13 @@ def extract_features(parent_dir,sub_dirs,file_ext='*.wav',bands = 20, frames = 4
                 if(len(sound_clip[round(start):round(end)]) == window_size):
                     signal = sound_clip[int(start):int(end)]
                     mfcc = librosa.feature.mfcc(y=signal, sr=s, n_mfcc = bands).T.flatten()[:, np.newaxis].T
-                    mfccs.append(mfcc)
                     label_base = os.path.splitext(label)[0]
+            mfccs.append(mfcc)
             labels.append(label_base)
     features = np.asarray(mfccs).reshape(len(mfccs),bands,frames)
     return np.array(features), np.array(labels, dtype=np.int)
+
+
 
 
 def one_hot_encode(labels):
