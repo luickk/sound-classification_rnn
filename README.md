@@ -13,6 +13,7 @@ This RNN tries to differentiate between American and British accents. The RNN is
 
 ## Usage
 Use command below to run program: <br>
-> python main.py <br>
+  > python main.py <br>
+
 Use command below to test model: <br> 
-> python pred.py <br>
+  > python pred.py <br>
