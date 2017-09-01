@@ -17,3 +17,6 @@ Use command below to run program: <br>
 
 Use command below to test model: <br> 
   > python pred.py <br>
+  
+## Dataset
+To train the model, [this](https://github.com/MrGrimod/british_american-sound-data_set) Dataset is used.
