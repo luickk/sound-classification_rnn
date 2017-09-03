@@ -1,0 +1,6 @@
+tr/ filter=lfs diff=lfs merge=lfs -text
+ts/ filter=lfs diff=lfs merge=lfs -text
+tr/0.wav filter=lfs diff=lfs merge=lfs -text
+tr/1.wav filter=lfs diff=lfs merge=lfs -text
+ts/0.wav filter=lfs diff=lfs merge=lfs -text
+ts/1.wav filter=lfs diff=lfs merge=lfs -text
