@@ -1,8 +1,8 @@
-Accent-recognition_rnn
+Sound Classification
 ===================
 
 ## Overview
-This RNN tries to differentiate between American and British accents. The RNN is trained by using YT British and American pronouncing tutorials.
+This RNN tries to differentiate between sounds. The RNN is trained by using example data provided by repo. in Sound-Data folder.
 
 ## Dependiencies
 > tensorflow <br>
@@ -17,6 +17,3 @@ Use command below to run program: <br>
 
 Use command below to test model: <br> 
   > python pred.py <br>
-  
-## Dataset
-To train the model, [this](https://github.com/MrGrimod/british_american-sound-data_set) Dataset is used.
