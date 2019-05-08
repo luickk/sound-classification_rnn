@@ -31,4 +31,4 @@ Dependiencies
 Example
 -------------------
 The RNN successfully classificated 1.wav as label 0 in class dictionary
-![img_pred](https://image.ibb.co/hN5OUx/Unbenannt.png)
+![img_pred](media/1.png)
